@@ -29,6 +29,7 @@ RUN dos2unix /usr/local/bin/claude-init && chmod +x /usr/local/bin/claude-init
 
 RUN echo "alias claude-tmux='su - claude -c \"tmux attach -d -t claude\"'" >> /root/.bashrc
 RUN echo "alias claude-clean='find /workspace/.claude-sessions -name \"*.jsonl\" -size +100M -delete'" >> /home/claude/.bashrc
+RUN echo "alias claude-relogin='claude auth logout 2>/dev/null; claude-auth'" >> /home/claude/.bashrc
 
 RUN echo -e "set -g mouse on\nset -g aggressive-resize on" > /home/claude/.tmux.conf && \
     chown claude:claude /home/claude/.tmux.conf
@@ -39,3 +40,6 @@ RUN dos2unix /home/claude/.claude/hooks/notify.sh && \
 
 COPY generate-claude-md.sh /usr/local/bin/generate-claude-md
 RUN dos2unix /usr/local/bin/generate-claude-md && chmod +x /usr/local/bin/generate-claude-md
+
+COPY claude-auth.sh /usr/local/bin/claude-auth
+RUN dos2unix /usr/local/bin/claude-auth && chmod +x /usr/local/bin/claude-auth

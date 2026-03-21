@@ -51,6 +51,8 @@ docker build -t runpod-claude-yolo ./runpod-claude-yolo
   - Forwards environment variables from root to `claude`'s bashrc (filtering out system vars)
   - Configures git identity and GitHub PAT credentials
   - Symlinks `/workspace/.claude-sessions` → `/home/claude/.claude/projects` so session history persists across pod restarts
+  - Restores auth credentials from `/workspace/.claude-auth/` if available
+  - Runs `claude login` before tmux if no credentials or API key found (URL appears in plain SSH terminal for easy copying)
   - Drops into a tmux session as the `claude` user
 - **Safety hook** (`block-dangerous-commands.sh`): PreToolUse hook on Bash that denies destructive patterns (`rm -rf /`, `mkfs`, `dd if=`, `DROP TABLE/DATABASE`, writes to `/dev/sd*`)
 - **Notifications** (`notify.sh`): Posts to ntfy.sh on Notification/Stop hook events. Requires `$NTFY_TOPIC` env var.
@@ -67,6 +69,7 @@ docker build -t runpod-claude-yolo ./runpod-claude-yolo
 - `yolo` — runs `claude --dangerously-skip-permissions`
 - `claude-tmux` (root) — reattaches to the claude tmux session
 - `claude-clean` (claude user) — deletes session JSONL files over 100MB from `/workspace/.claude-sessions`
+- `claude-relogin` (claude user) — re-authenticate and persist new credentials to `/workspace`
 
 ## RunPod Constraints (do NOT try to work around these)
 

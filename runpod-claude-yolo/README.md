@@ -36,8 +36,10 @@ docker build -t runpod-claude-yolo .
 2. Forwards environment variables from root to the `claude` user's bashrc
 3. Configures git identity and GitHub credentials
 4. Symlinks session history to `/workspace/.claude-sessions` (persists across pod restarts)
-5. Generates `~/.claude/CLAUDE.md` with GPU hardware context (model size limits, inference backend compatibility)
-6. Starts a tmux session as the `claude` user
+5. Restores auth credentials from `/workspace/.claude-auth/` if they exist
+6. Generates `~/.claude/CLAUDE.md` with GPU hardware context (model size limits, inference backend compatibility)
+7. **Runs `claude login` before tmux** if no credentials or API key are found — the auth URL appears in the plain SSH terminal where it's easy to copy
+8. Starts a tmux session as the `claude` user
 
 ## Safety
 
@@ -61,3 +63,4 @@ docker build -t runpod-claude-yolo .
 - `yolo` (claude user) — `claude --dangerously-skip-permissions`
 - `claude-tmux` (root) — reattach to the claude tmux session
 - `claude-clean` (claude user) — delete session JSONL files over 100MB
+- `claude-relogin` (claude user) — re-authenticate and persist new credentials

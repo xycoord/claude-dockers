@@ -1,0 +1,25 @@
+{
+  "hooks": {
+    "Notification": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "printf '\\033]777;notify;Claude Code;Claude Code needs your input\\007' > /dev/tty"
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "printf '\\033]777;notify;Claude Code;Claude Code task completed\\007' > /dev/tty"
+          }
+        ]
+      }
+    ]
+  }
+}

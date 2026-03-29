@@ -1,7 +1,7 @@
 #!/bin/bash
 # Generates ~/.claude/CLAUDE.md with hardware context that Claude can't easily discover
 
-MD="/home/claude/.claude/CLAUDE.md"
+MD="/root/.claude/CLAUDE.md"
 
 # GPU info
 GPU_NAME=$(nvidia-smi --query-gpu=name --format=csv,noheader 2>/dev/null | head -1 || echo "unknown")
@@ -83,6 +83,41 @@ Multi-GPU with tensor parallelism multiplies these by GPU count (${GPU_COUNT}).
 
 Use: uv pip install --system --compile-bytecode --break-system-packages -e .
 Do NOT pin or reinstall torch, torchvision, torchaudio, or CUDA — they come from the base image.
+
+## Notifications (ntfy.sh)
+
+The user monitors this pod remotely via ntfy.sh push notifications. The topic is set in \$NTFY_TOPIC.
+You MUST send notifications in these situations:
+
+### Task complete
+When you finish a task and are waiting for further instructions:
+\`\`\`bash
+curl -s -H "Title: Task Complete" -H "Tags: white_check_mark" -d "Short summary of what you did" "ntfy.sh/\${NTFY_TOPIC}"
+\`\`\`
+
+### Blocked / need user action
+When you cannot proceed without the user doing something (e.g. accepting a license, approving access, providing credentials, switching to more compute, increasing storage capacity):
+\`\`\`bash
+curl -s -H "Title: Action Needed" -H "Priority: urgent" -H "Tags: warning" -d "What the user needs to do" "ntfy.sh/\${NTFY_TOPIC}"
+\`\`\`
+
+### When to check vs. proceed
+You are expected to solve problems independently. Do NOT notify for implementation decisions (choosing libraries, fixing dependencies, retrying failed downloads, etc.).
+
+DO notify (urgent, then wait for a response) when a decision would change what was asked for — e.g. substituting a different model, dataset, or approach than what was specified. The test: would the user look at the result and say "that's not what I asked for"? If yes, notify and wait.
+
+### While waiting for a response
+- If you have other independent tasks, continue working on those.
+- If you have nothing else to do, speculatively proceed with the most likely path — but do so non-destructively. Think CPU branch prediction: keep compute occupied, but make rollback easy. For example, start downloading an alternative model while asking — you can always delete it. Do NOT make irreversible changes (overwriting data, pushing code, deleting the original) until the user confirms.
+
+### Git workflow
+Push after every commit so the user can track progress remotely. Git push notifications are sent automatically by a hook — you don't need to notify manually for pushes.
+
+### Rules
+- ALWAYS notify on task completion and when blocked — the user may not be watching the terminal
+- Keep notification messages short and actionable (one sentence)
+- Do NOT notify for intermediate steps — only final completion or when blocked
+- If \$NTFY_TOPIC is empty, skip notifications silently
 MDEOF
 
-chown claude:claude "$MD"
+# no chown needed — running as root

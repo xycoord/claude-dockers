@@ -20,6 +20,18 @@ mkdir -p /root/.claude
 rm -rf /root/.claude/projects
 ln -sf /workspace/.claude-sessions /root/.claude/projects
 
+# Clone or update custom skills
+if [ -n "$CLAUDE_SKILLS_REPO" ]; then
+  if [ -d /root/.claude/skills/.git ]; then
+    echo "Updating skills..."
+    git -C /root/.claude/skills pull --quiet
+  else
+    echo "Cloning skills..."
+    rm -rf /root/.claude/skills
+    git clone --quiet "$CLAUDE_SKILLS_REPO" /root/.claude/skills
+  fi
+fi
+
 # Generate machine-level CLAUDE.md with GPU context
 generate-claude-md
 

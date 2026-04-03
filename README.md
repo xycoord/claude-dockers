@@ -10,6 +10,7 @@ Built upon `runpod/pytorch:1.0.2-cu1281-torch280-ubuntu2404`.
 - **Safety hooks** — PreToolUse hook blocks destructive commands (`rm -rf /`, `mkfs`, `DROP TABLE`, etc.)
 - **Push notifications** — ntfy.sh alerts when Claude finishes a task, needs your input, or pushes to git
 - **GPU-aware CLAUDE.md** — auto-generated at init with GPU specs, model size limits, inference backend compatibility, and operational guidelines
+- **Custom skills** — load your personal Claude skills from a git repo at init time
 - **Session persistence** — session history survives pod restarts via `/workspace`
 - **tmux** — detach and reconnect without interrupting Claude
 
@@ -44,6 +45,7 @@ Create a new template in [RunPod](https://www.runpod.io/console/templates):
   - `GIT_EMAIL` = your git email address
   - `GITHUB_PAT` = select from secrets
   - `NTFY_TOPIC` = select from secrets (optional)
+  - `CLAUDE_SKILLS_REPO` = git URL for your custom skills repo (optional)
   - Any API keys, cache paths (e.g. `HF_HOME = /workspace/.cache/huggingface/`) or other environment variables you like
 
 Then launch a pod from the template.
@@ -59,6 +61,7 @@ This will:
 
 - Configure git identity and credentials from your environment variables
 - Set up session history persistence in `/workspace/.claude-sessions`
+- Clone or update your custom skills from `$CLAUDE_SKILLS_REPO` (if set)
 - Generate `~/.claude/CLAUDE.md` with your GPU specs and operational guidelines
 - Drop you into a tmux session in `/workspace` 
 
@@ -105,6 +108,8 @@ This is particularly useful when using claude in yolo mode, giving it long runni
 | `yolo`            | `claude --dangerously-skip-permissions` |
 | `claude-tmux`     | Reattach to tmux (if disconnected)      |
 | `claude-clean`    | Delete session files over 100MB         |
+| `skills-pull`     | Pull latest skills from your repo       |
+| `skills-push`     | Commit and push skill changes           |
 | `Ctrl+b` then `d` | Detach from tmux (Claude keeps running) |
 
 

@@ -32,7 +32,9 @@ RUN echo '[ -d /workspace ] && cd /workspace' >> /root/.profile
 # Aliases
 RUN echo "alias yolo='claude --dangerously-skip-permissions'" >> /root/.bashrc && \
     echo "alias claude-tmux='tmux attach -d -t claude'" >> /root/.bashrc && \
-    echo "alias claude-clean='find /workspace/.claude-sessions -name \"*.jsonl\" -size +100M -delete'" >> /root/.bashrc
+    echo "alias claude-clean='find /workspace/.claude-sessions -name \"*.jsonl\" -size +100M -delete'" >> /root/.bashrc && \
+    echo "alias skills-pull='git -C /root/.claude/skills pull'" >> /root/.bashrc && \
+    echo "alias skills-push='git -C /root/.claude/skills add -A && git -C /root/.claude/skills commit -m \"Update skills\" && git -C /root/.claude/skills push'" >> /root/.bashrc
 
 # tmux config
 RUN echo -e "set -g mouse on\nset -g aggressive-resize on" > /root/.tmux.conf

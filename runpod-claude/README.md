@@ -35,13 +35,15 @@ Set these in the RunPod pod configuration:
 | `NTFY_TOPIC` | No | ntfy.sh topic for push notifications |
 | `ANTHROPIC_API_KEY` | No | If set, uses API key auth instead of OAuth |
 | `HF_TOKEN` | For gated models | Hugging Face token for downloading gated models |
+| `CLAUDE_SKILLS_REPO` | No | Git repo URL for custom Claude skills |
 
 ## What `claude-init` Does
 
 1. Configures git identity from `$GIT_EMAIL` and credentials from `$GITHUB_PAT`
 2. Symlinks session history to `/workspace/.claude-sessions` (persists across pod restarts)
-3. Generates `~/.claude/CLAUDE.md` with GPU specs, model size limits, and operational guidelines
-4. Starts a tmux session in `/workspace`
+3. Clones or updates custom skills from `$CLAUDE_SKILLS_REPO` into `~/.claude/skills/` (if set)
+4. Generates `~/.claude/CLAUDE.md` with GPU specs, model size limits, and operational guidelines
+5. Starts a tmux session in `/workspace`
 
 ## Safety Hooks
 
@@ -68,6 +70,8 @@ All notification hooks require `$NTFY_TOPIC` to be set — they silently no-op o
 | `yolo` | `claude --dangerously-skip-permissions` |
 | `claude-tmux` | Reattach to the tmux session |
 | `claude-clean` | Delete session JSONL files over 100MB |
+| `skills-pull` | Pull latest skills from your repo |
+| `skills-push` | Commit and push skill changes |
 
 ## tmux
 
